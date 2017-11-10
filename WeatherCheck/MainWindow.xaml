@@ -1,0 +1,105 @@
+﻿<Window x:Class="WeatherCheck.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherCheck"
+        xmlns:data="clr-namespace:WeatherCheck.Models"
+        mc:Ignorable="d"
+        Title="Weather" Height="700" Width="550" Background="#FFEAE5E5">
+    <Window.Resources>
+        <data:List x:Key="WeatherData" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="350" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="15" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="#FF9E9E9E">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            
+            <Border Name="borderCityName" BorderBrush="{x:Null}" Height="30" Margin="5,5,0,5" Grid.Column="0" Visibility="Collapsed">
+                <TextBox Name="tbCityName" Text="" Height="24" VerticalAlignment="Center" FontSize="18" TextChanged="tbCityName_TextChanged" />
+            </Border>
+            <Border Name="borderSelectedCityName" BorderBrush="{x:Null}" Height="30" Margin="5,5,0,5" Grid.Column="0" Visibility="Visible">
+                <TextBlock Name="tbSelectedCityName" Text="" Height="35" VerticalAlignment="Center" FontSize="22" FontWeight="Bold" />
+            </Border>
+            <Border BorderBrush="{x:Null}" Height="30" Margin="5,5,5,5" Grid.Column="1" Visibility="Visible">
+                <Button Name="btnGetCityWeather" Content=" Select City " VerticalAlignment="Center" HorizontalAlignment="Right" Height="24" Click="btnSelectCity_Click" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="#FFCFCFCF">
+            <ListBox Name="lbCitySuggestions" Visibility="Collapsed" SelectionChanged="lbCitySuggestions_SelectionChanged" Background="#FFCFCFCF" />
+        </Grid>
+
+        <ItemsControl Name="icCurrentWeatherData" Grid.Row="1">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="150" />
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{Binding main.temp, StringFormat='\{0:N1\}°C'}" FontSize="66" Foreground="DarkMagenta" FontWeight="Bold" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                        <Image Source="{Binding weather[0].icon}" Grid.Row="1" Width="250" Height="250" VerticalAlignment="Center" />
+                        <Image Source="./Resources/WeatherImages/arrow.png" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Width="60" Height="60" RenderTransformOrigin="0.5, 0.5">
+                            <Image.RenderTransform>
+                                <RotateTransform Angle="{Binding wind.deg}"/>
+                            </Image.RenderTransform>
+                        </Image>
+                        <TextBlock Text="{Binding Path=wind.speed, StringFormat='\{0\}m/s'}" FontSize="18" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" />
+                        <TextBlock Text="{Binding weather[0].description}" Grid.Row="4" FontSize="14" HorizontalAlignment="Center" TextWrapping="Wrap" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2">
+            <ItemsControl Name="icWeatherData" Grid.Row="2">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60" />
+                                <RowDefinition Height="60" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="{Binding Path=datetime, StringFormat='{}{0: dddd, HH:mm}'}" FontSize="20" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" VerticalAlignment="Bottom" TextAlignment="Left" Background="#FFD3CCCC" />
+                            <Image Source="{Binding weather[0].icon}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Stretch="UniformToFill" />
+                            <TextBlock Text="{Binding main.temp, StringFormat='\{0:N1\}°C'}" FontSize="36" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" FontStretch="Normal" />
+                            <Image Source="./Resources/WeatherImages/arrow.png" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Width="40" Height="40" RenderTransformOrigin="0.5, 0.5">
+                                <Image.RenderTransform>
+                                    <RotateTransform Angle="{Binding wind.deg}"/>
+                                </Image.RenderTransform>
+                            </Image>
+                            <TextBlock Text="{Binding Path=wind.speed, StringFormat='\{0\}m/s'}" FontSize="26" Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" FontStretch="Normal" />
+                            <TextBlock Text="{Binding weather[0].description}" Grid.Row="1" Grid.Column="4" FontSize="26" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        <Image Name="imgLoading" Source="/Resources/WeatherImages/Loading.png" Grid.Row="2" Visibility="Hidden" />
+
+        <TextBlock Text="Data provided by OpenWeatherMap" Grid.Row="3" FontSize="10" Background="#FF9E9E9E"/>
+    </Grid>
+</Window>
